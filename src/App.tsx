@@ -6,12 +6,15 @@ import Login from "./routes/login"
 import CreateAccount from "./routes/create-account"
 import { createGlobalStyle } from "styled-components"
 import reset from "styled-reset"
+import { useEffect,useState } from "react"
+import LoadingScreen from "./components/loading-screen"
 
 const router = createBrowserRouter([
 
   {
     path: '/',
     element: <Layout />,
+    //Home 과 profile은 laycomponent 안에서 rednder
     children: [
       {
         path: "", //경로를 따로 하지 않았을때는 현재 위치 
@@ -42,7 +45,7 @@ const GlobalStyles = createGlobalStyle`
   body{
     background-color: black;
     color: white;
-    font
+    
 
  
 `;
@@ -50,12 +53,22 @@ const GlobalStyles = createGlobalStyle`
 
 
 function App() {
+  const [isLoading, setLoading] = useState(true);
+  const init = async() => {
+    //wait for firebase
+    setLoading(false);
+   
+  }
+  useEffect(() =>{
+    init();
 
+  }, []);
 
   return (
     <>
       <GlobalStyles />
-      <RouterProvider router={router} />
+      {isLoading ? <LoadingScreen /> : < RouterProvider router = {router} />}
+   
     </>
   )
 }
