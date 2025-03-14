@@ -32,7 +32,7 @@
 #### 🆕 새롭게 알게 된 개념  
 
 <details>
-  <summary>1. `<Wrapper>` 태그</summary>
+  <summary>1. &lt;Wrapper&gt; 태그</summary>
 
 - `styled-components`를 사용할 때, **스타일이 적용된 컨테이너 컴포넌트**로 활용됨.  
 - `div` 대신 **`styled.div`를 생성하여** `Wrapper`처럼 사용 가능.  
