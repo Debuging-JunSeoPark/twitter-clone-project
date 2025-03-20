@@ -89,13 +89,13 @@ const onSubmit = (event) => {
   event.preventDefault(); // 폼 제출 시 새로고침 방지
   console.log(name, email, password);
 };
-
+```
 </details>
 
 </details>
 
  <details>
-  <summary>📅 2025-03-20  2.4 Firebase Authentication</summary>
+  <summary>📅 2025-03-20  Firebase Authentication</summary>
 
 - **Firebase를 활용한 회원가입 기능 구현**  
   - `createUserWithEmailAndPassword`를 사용하여 **Firebase 인증으로 사용자 계정 생성**  
@@ -145,6 +145,6 @@ const onSubmit = async (event) => {
     setIsLoading(false);
   }
 };
+```
  </details>
 
- </details>
