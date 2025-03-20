@@ -89,3 +89,57 @@ const onSubmit = (event) => {
   event.preventDefault(); // 폼 제출 시 새로고침 방지
   console.log(name, email, password);
 };
+
+<details>
+  <summary>📅 2025-03-20  2.4 Firebase Authentication</summary>
+
+- **Firebase를 활용한 회원가입 기능 구현**  
+  - `createUserWithEmailAndPassword`를 사용하여 **Firebase 인증으로 사용자 계정 생성**  
+  - `updateProfile`을 사용하여 **사용자의 Display Name 설정**  
+  - `navigate`를 활용하여 **회원가입 완료 후 홈 화면으로 이동**  
+
+- **회원가입 로딩 상태 처리**  
+  - `isLoading` 상태(`useState`)를 활용하여 **회원가입 중 로딩 화면 표시**  
+  - `try-catch-finally` 블록을 활용하여 **Firebase 연동 시 로딩 상태 변경**  
+  - 에러 발생 시 **에러 메시지 상태(`error`) 추가 및 화면에 표시**  
+
+- **회원가입 입력값 유효성 검사**  
+  - `name`, `email`, `password`가 비어 있는지 확인하고 비어 있으면 회원가입 진행하지 않음  
+  - `isLoading` 상태가 `true`일 때 중복 제출 방지  
+
+- **회원가입 성공 후 자동 로그인 처리**  
+  - Firebase는 `createUserWithEmailAndPassword`를 사용하면 **자동으로 로그인된 상태**가 됨  
+  - `updateProfile`을 사용하여 사용자 프로필 업데이트 가능  
+
+#### 🆕 새롭게 알게 된 개념  
+
+<details>
+  <summary>1. `createUserWithEmailAndPassword` 를 사용한 Firebase 회원가입</summary>
+
+- `createUserWithEmailAndPassword(auth, email, password)`를 사용하면 **Firebase에서 계정을 생성**할 수 있음.  
+- 계정 생성이 완료되면 **사용자는 자동으로 로그인됨**.  
+- `try-catch` 문을 활용하여 **계정 생성 오류를 감지하고 처리** 가능.  
+
+```jsx
+const onSubmit = async (event) => {
+  event.preventDefault();
+  if (!name || !email || !password || isLoading) return;
+
+  setIsLoading(true);
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log("User created:", userCredential.user);
+
+    // 사용자 프로필 업데이트
+    await updateProfile(userCredential.user, { displayName: name });
+
+    // 회원가입 후 홈으로 이동
+    navigate("/");
+  } catch (error) {
+    console.error("Error creating user:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+

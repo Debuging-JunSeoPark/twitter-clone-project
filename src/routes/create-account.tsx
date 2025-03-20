@@ -1,5 +1,8 @@
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import styled from "styled-components";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 
 const Wrapper = styled.div`
@@ -46,6 +49,7 @@ const Error = styled.span`
 `;
 
 export default function CreateAccount(){
+    const navigate = useNavigate();
     const [isLoading, setLoading] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -64,12 +68,17 @@ export default function CreateAccount(){
         }
     }
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); //새로 고침 방지
+        if(isLoading || name === "" || email === ""  || password ==="") return;
         try{
-        //우선 계정을 생성
-        //사용자의 프로필 지정
-        //홈페이지로 리디렉션
+            setLoading(true);
+            const credential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log(credential.user);
+            await updateProfile(credential.user, {
+                displayName: name,
+            });
+            navigate("/");
         }catch(e){
 
         }
@@ -83,7 +92,7 @@ export default function CreateAccount(){
     return (
         <Wrapper>
         <Form onSubmit={onSubmit}>
-            <Title>Log into 𝕏</Title>
+            <Title>Join 𝕏</Title>
             <Input 
             onChange={onChange}
             name="name" 
