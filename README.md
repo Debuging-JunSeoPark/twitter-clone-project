@@ -90,7 +90,11 @@ const onSubmit = (event) => {
   console.log(name, email, password);
 };
 
-<details>
+</details>
+
+</details>
+
+ <details>
   <summary>📅 2025-03-20  2.4 Firebase Authentication</summary>
 
 - **Firebase를 활용한 회원가입 기능 구현**  
@@ -141,5 +145,6 @@ const onSubmit = async (event) => {
     setIsLoading(false);
   }
 };
+ </details>
 
-
+ </details>
