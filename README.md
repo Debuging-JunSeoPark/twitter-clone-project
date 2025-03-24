@@ -147,6 +147,7 @@ const onSubmit = async (event) => {
 };
 ```
  </details>
+</details>
 
 <details>
   <summary>📅 2025-03-24  Protected Route & Logout</summary>
