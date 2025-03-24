@@ -148,3 +148,37 @@ const onSubmit = async (event) => {
 ```
  </details>
 
+<details>
+  <summary>📅 2025-03-24  Protected Route & Logout</summary>
+
+- **Protected Route 컴포넌트 구현**  
+  - `auth.currentUser`를 통해 사용자가 로그인했는지 여부 확인  
+  - 로그인 상태가 아니라면 `<Navigate to="/login" />`을 통해 **로그인 페이지로 리디렉션**  
+  - 로그인 상태라면 `children`을 반환하여 **보호된 페이지 표시**  
+  - `Layout` 컴포넌트를 `ProtectedRoute`로 감싸 **Home / Profile 등 하위 경로를 한 번에 보호**  
+
+- **로그아웃 기능 추가**  
+  - `signOut(auth)`를 호출하여 **Firebase에서 사용자 로그아웃 처리**  
+  - 로그아웃 후 페이지 새로고침 시 자동으로 **로그인 페이지로 이동**됨 (`ProtectedRoute` 덕분)  
+  - Home 페이지에 테스트용 로그아웃 버튼 구현  
+
+---
+
+🌟 **Protected Route의 개념**
+
+- `ProtectedRoute`는 **특정 조건을 만족한 사용자만 특정 페이지에 접근할 수 있도록 보호하는 컴포넌트**  
+- 주로 인증(로그인) 여부, 사용자 권한, 구독 상태 등의 조건을 기반으로 접근 제어를 수행
+- 조건을 만족하지 않으면 다른 페이지(예: 로그인, 접근 거부 페이지 등)로 리디렉션
+- 리액트의 `children` 속성을 통해 **내부에 감싸진 컴포넌트를 조건 만족 시에만 렌더링**
+
+```tsx
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const user = auth.currentUser;
+
+  if (user === null) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+}
+```
