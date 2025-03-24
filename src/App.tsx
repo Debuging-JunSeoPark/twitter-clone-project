@@ -10,20 +10,27 @@ import { useEffect, useState } from "react";
 import LoadingScreen from "./components/loading-screen";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import ProtectedRoute from "./components/protected-route";
 
 // 라우터 설정
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />   
+      </ProtectedRoute>
+      //ProtectedRoute의 children으로 Home이 들어감.
+    ),
     children: [
       {
         path: "", // 기본 경로 (홈 화면)
-        element: <Home />,
+        element:<Home />   
       },
       {
         path: "profile",
-        element: <Profile />,
+        element:  <Profile />
+
       },
     ],
   },
