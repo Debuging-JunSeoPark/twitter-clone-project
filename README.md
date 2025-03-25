@@ -183,3 +183,69 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   return children;
 }
 ```
+ </details>
+</details>
+<details>
+  <summary>📅 2025-03-25  Login 구현 & 에러 처리 개선</summary>
+
+- **회원가입/로그인 시 에러 처리 로직 개선**  
+  - `try-catch` 블록을 통해 Firebase 에러를 포착하고 사용자에게 알림 표시  
+  - 기존 `setError(message)` 방식 대신, **더 사용자 친화적인 메시지 출력 구조 구상**  
+  - 에러가 발생한 경우 `instanceof FirebaseError`로 구분 후 `error.code`, `error.message` 추출 가능
+
+- **로그인 기능 구현 (`signInWithEmailAndPassword`)**  
+  - 이메일/비밀번호가 비어 있거나 `isLoading` 상태일 경우 제출 방지  
+  - 로그인 성공 시 홈 화면으로 이동 (`navigate("/")`)  
+  - 로그인 실패 시 Firebase에서 제공하는 메시지를 출력  
+
+- **회원가입/로그인 전환 링크 추가 (`Link` 컴포넌트 사용)**  
+  - 로그인 페이지에 “계정이 없으신가요?” → 회원가입 페이지로 이동  
+  - 회원가입 페이지에 “이미 계정이 있으신가요?” → 로그인 페이지로 이동  
+  - 중복되는 스타일 요소는 `auth-components.ts`에 공통화하여 재사용  
+
+---
+
+🎯 **Toast를 활용한 사용자 친화적 에러 표시 적용**
+설치 명령어:
+
+```bash
+npm install react-toastify
+```
+
+- `react-toastify`를 도입하여 사용자에게 **더 직관적이고 눈에 띄는 에러 메시지 제공**
+- 기존의 `<Error>{error}</Error>` 렌더링 방식보다 유지보수성과 UX 측면에서 향상됨
+
+```tsx
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+try {
+  // Firebase 로그인/회원가입 로직
+} catch (error) {
+  if (error instanceof FirebaseError) {
+    toast.error(error.message); // 사용자에게 에러 메시지를 띄움
+  }
+}
+```
+- `App.tsx` 또는 루트 컴포넌트에 `<ToastContainer />`를 추가하여 어느 컴포넌트에서도 토스트 메시지 출력 가능
+
+```tsx
+import { ToastContainer } from "react-toastify";
+
+function App() {
+  return (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer />
+    </>
+  );
+}
+```
+
+✅ 장점
+
+에러가 화면 상단에 애니메이션과 함께 표시되어 가시성 증가
+
+로그인/회원가입 화면의 코드가 더 깔끔해지고 단순해짐
+
+사용자 경험(UX) 관점에서도 긍정적 효과
