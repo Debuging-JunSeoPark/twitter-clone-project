@@ -249,3 +249,27 @@ function App() {
 로그인/회원가입 화면의 코드가 더 깔끔해지고 단순해짐
 
 사용자 경험(UX) 관점에서도 긍정적 효과
+
+🆕 새롭게 알게 된 개념
+<details> <summary>1. `instanceof`를 사용한 에러 타입 구분</summary>
+instanceof 키워드를 사용하면 특정 객체가 어떤 클래스의 인스턴스인지 확인할 수 있음
+
+Firebase에서 발생한 에러가 FirebaseError 클래스의 인스턴스인지 확인하여 에러를 선별적으로 처리 가능
+
+```tsx
+if (error instanceof FirebaseError) {
+  toast.error(error.message);
+}
+```
+</details> <details> <summary>2. `Switcher` 태그를 활용한 로그인/회원가입 페이지 전환</summary>
+styled-components로 만든 Switcher 컴포넌트를 사용해
+회원가입 ↔ 로그인 페이지 간 이동을 유도하는 UI 구성 요소 구현
+
+```tsx
+<Switcher>
+  계정이 없으신가요? <Link to="/create-account">회원가입</Link>
+</Switcher>
+```
+컴포넌트화하여 로그인/회원가입 페이지 모두에서 재사용 가능하며 스타일 유지도 쉬움
+
+</details> </details> 
