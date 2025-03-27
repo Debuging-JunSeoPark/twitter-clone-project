@@ -275,7 +275,7 @@ styled-components로 만든 Switcher 컴포넌트를 사용해
 </details> </details> 
 
 <details>
-  <summary>📅 2025-03-23  Social Login (GitHub)</summary>
+  <summary>📅 2025-03-27  Social Login (GitHub)</summary>
 
 - **GitHub 소셜 로그인 연동 (Firebase Authentication)**  
   - Firebase 콘솔의 **Authentication > Sign-in method**에서 GitHub 로그인 활성화  
@@ -298,7 +298,7 @@ styled-components로 만든 Switcher 컴포넌트를 사용해
   - 동일한 이메일로 이미 가입된 계정이 있다면 **다른 자격 증명 충돌 에러 발생**  
   - Firebase 콘솔에서 GitHub 로그인을 활성화하지 않으면 로그인 시도 자체가 실패함
 
-- ✅ **결과**
+- **결과**
   - 이메일/비밀번호 없이 **GitHub 계정만으로 로그인 가능**
   - 기존 로그인 흐름에 **소셜 로그인 옵션이 추가됨**으로써 사용자 접근성 향상  
   - 인증 완료 후 홈으로 리디렉션되어 정상 로그인 상태 유지 확인
