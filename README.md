@@ -273,3 +273,35 @@ styled-components로 만든 Switcher 컴포넌트를 사용해
 컴포넌트화하여 로그인/회원가입 페이지 모두에서 재사용 가능하며 스타일 유지도 쉬움
 
 </details> </details> 
+
+<details>
+  <summary>📅 2025-03-23  Social Login (GitHub)</summary>
+
+- **GitHub 소셜 로그인 연동 (Firebase Authentication)**  
+  - Firebase 콘솔의 **Authentication > Sign-in method**에서 GitHub 로그인 활성화  
+  - GitHub 개발자 설정에서 OAuth 앱 등록 (`https://github.com/settings/developers`)  
+    - 콜백 URL은 Firebase에서 제공하는 주소 사용  
+    - Client ID, Client Secret을 Firebase에 등록 후 저장
+
+- **GitHub 로그인 버튼 컴포넌트 생성**  
+  - `public/` 디렉토리에 GitHub SVG 아이콘 추가  
+  - `styled-components`로 스타일링된 버튼 구현  
+  - `login` 및 `create-account` 페이지에 GitHub 버튼 삽입
+
+- **Firebase GitHub Provider로 로그인 처리 구현**  
+  - `GitHubAuthProvider` 인스턴스 생성  
+  - `signInWithPopup(auth, provider)` 또는 `signInWithRedirect(auth, provider)` 사용 가능  
+  - 로그인 성공 시 `navigate("/")`를 통해 홈으로 리디렉션  
+  - 로그인 실패 시 콘솔에 에러 출력 (`popup-cancelled`, `auth/account-exists-with-different-credential` 등)
+
+- **주의 사항**  
+  - 동일한 이메일로 이미 가입된 계정이 있다면 **다른 자격 증명 충돌 에러 발생**  
+  - Firebase 콘솔에서 GitHub 로그인을 활성화하지 않으면 로그인 시도 자체가 실패함
+
+- ✅ **결과**
+  - 이메일/비밀번호 없이 **GitHub 계정만으로 로그인 가능**
+  - 기존 로그인 흐름에 **소셜 로그인 옵션이 추가됨**으로써 사용자 접근성 향상  
+  - 인증 완료 후 홈으로 리디렉션되어 정상 로그인 상태 유지 확인
+
+</details>
+
