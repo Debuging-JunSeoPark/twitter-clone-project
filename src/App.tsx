@@ -11,6 +11,9 @@ import LoadingScreen from "./components/loading-screen";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import ProtectedRoute from "./components/protected-route";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 // 라우터 설정
 const router = createBrowserRouter([
@@ -77,10 +80,17 @@ function App() {
   }, []);
 
   return (
+    <>
+    <GlobalStyles />
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      theme="colored"
+    />
     <Wrapper>
-      <GlobalStyles />
       {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
     </Wrapper>
+  </>
   );
 }
 
