@@ -305,3 +305,56 @@ styled-components로 만든 Switcher 컴포넌트를 사용해
 
 </details>
 
+<details>
+  <summary>📅 2025-03-28  Firebase 인증 기능 마무리 복습</summary>
+
+---
+
+### 🔑 Firebase `auth` 객체에서 자주 사용하는 메서드
+
+| 메서드 | 설명 |
+|--------|------|
+| `auth.currentUser` | 현재 로그인된 사용자 정보 (없으면 `null`) |
+| `signInWithEmailAndPassword(auth, email, password)` | 이메일/비밀번호로 로그인 |
+| `createUserWithEmailAndPassword(auth, email, password)` | 이메일/비밀번호로 회원가입 |
+| `updateProfile(user, { displayName })` | 사용자 프로필 이름 설정 |
+| `signOut(auth)` | 로그아웃 처리 |
+| `sendPasswordResetEmail(auth, email)` | 비밀번호 재설정 이메일 발송 |
+
+---
+
+### ⏳ 비동기 처리 흐름
+
+- 회원가입 및 로그인 요청은 **`async/await + try-catch`** 조합으로 처리
+- `isLoading` 상태를 통해 요청 중 중복 클릭 방지 및 로딩 처리
+- `useEffect(() => { init(); }, [])`로 초기 로그인 상태 확인
+
+---
+
+### 🎨 styled-components 사용 이유
+
+- 기존 CSS 파일보다 **컴포넌트 단위로 스타일을 관리**할 수 있어 유지보수가 용이함  
+- JS 안에서 스타일을 선언할 수 있어 **조건부 스타일링, 재사용성**이 뛰어남  
+- 여러 페이지에서 공통 사용되는 폼 UI 구성요소들을 **분리 및 재사용** 가능
+
+---
+
+### 💡 상태(state) 한 줄로 줄이기 팁
+
+> 여러 개의 상태값을 객체로 묶어서 간결하게 관리 가능
+
+```tsx
+const [form, setForm] = useState({
+  name: "",
+  email: "",
+  password: "",
+  isLoading: false,
+  error: "",
+});
+```
+```tsx
+// 업데이트 예시
+setForm(prev => ({ ...prev, email: "example@email.com" }));
+상태 관리를 하나의 객체로 합치면 가독성과 확장성 모두 향상됨
+```
+</details> 
