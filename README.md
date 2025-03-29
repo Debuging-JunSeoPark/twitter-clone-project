@@ -358,3 +358,47 @@ setForm(prev => ({ ...prev, email: "example@email.com" }));
 상태 관리를 하나의 객체로 합치면 가독성과 확장성 모두 향상됨
 ```
 </details> 
+
+<details>
+  <summary>📅 2025-03-25  Layout 구성 및 내비게이션 바 구현</summary>
+
+- **로그인 후 사용자 화면에 고정될 내비게이션 바(UI) 구성**  
+  - `Layout` 컴포넌트에 `Wrapper`와 `Menu`, `MenuItem` 구조로 좌측 고정 바 생성  
+  - `Home`, `Profile`, `Logout` 아이콘을 **[HeroIcons](https://heroicons.com/)** 에서 SVG로 가져와 적용  
+  - `Link` 컴포넌트를 활용하여 페이지 이동 (홈/프로필), 로그아웃은 버튼 처리  
+  - 로그아웃 클릭 시 `window.confirm()`을 사용해 **사용자 확인 후** 로그아웃 처리  
+
+- **스타일 구성 (`styled-components`)**
+  - `Wrapper`: `display: grid;`, `grid-template-columns: 1fr 4fr`로 **좌우 영역 분할**  
+  - `Menu`: `display: flex;`, `flex-direction: column;` 으로 **세로 정렬된 버튼 구성**  
+  - `MenuItem`: 원형 버튼 형태 (`border-radius: 50%`, `width/height: 50px`)  
+
+- **로그아웃 처리 흐름**
+  - 클릭 시 `window.confirm()`으로 확인 팝업 출력  
+  - 확인 시 `await signOut(auth)` → `navigate("/login")`  
+
+---
+
+### 🆕 새롭게 알게 된 개념
+
+<details>
+  <summary>1. `grid-template-columns`를 사용한 CSS Grid 레이아웃</summary>
+
+- `grid-template-columns`는 CSS Grid에서 **각 열의 비율 또는 크기를 지정**하는 속성  
+- 예시: `grid-template-columns: 1fr 4fr`  
+  - 전체 화면을 5등분하여, 왼쪽은 `1`, 오른쪽은 `4` 비율로 너비를 나눔  
+  - **사이드바 + 본문 구성**에 유용함  
+- 함께 사용된 속성 예시:
+
+```tsx
+const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap: 20px;
+  padding: 50px 0;
+  max-width: 860px;
+  width: 100%;
+`;
+```
+</details> 
+</details>
