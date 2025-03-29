@@ -360,7 +360,7 @@ setForm(prev => ({ ...prev, email: "example@email.com" }));
 </details> 
 
 <details>
-  <summary>📅 2025-03-25  Layout 구성 및 내비게이션 바 구현</summary>
+  <summary>📅 2025-03-29  Layout 구성 및 내비게이션 바 구현</summary>
 
 - **로그인 후 사용자 화면에 고정될 내비게이션 바(UI) 구성**  
   - `Layout` 컴포넌트에 `Wrapper`와 `Menu`, `MenuItem` 구조로 좌측 고정 바 생성  
