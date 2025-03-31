@@ -403,12 +403,8 @@ const Wrapper = styled.div`
 </details> 
 </details>
 
-물론입니다! 아래는 **2025-03-26 학습 기록**을 마크다운(Markdown) 형식으로 정리한 내용입니다.
-
----
-
 <details>
-  <summary>📅 2025-03-26  Post Tweet Form 구성</summary>
+  <summary>📅 2025-03-31  Post Tweet Form 구성</summary>
 
 ### 📌 구현한 내용
 
