@@ -402,3 +402,56 @@ const Wrapper = styled.div`
 ```
 </details> 
 </details>
+
+물론입니다! 아래는 **2025-03-26 학습 기록**을 마크다운(Markdown) 형식으로 정리한 내용입니다.
+
+---
+
+<details>
+  <summary>📅 2025-03-26  Post Tweet Form 구성</summary>
+
+### 📌 구현한 내용
+
+- **트윗 작성 폼(PostTweetForm) 컴포넌트 구현**  
+  - `<textarea>`를 사용하여 트윗 내용 입력 가능  
+  - 이미지 파일 첨부 기능 추가 (`input type="file"` + `label` 클릭으로 연결)  
+  - 작성 버튼과 첨부 버튼에 스타일 적용 (`styled-components`)  
+
+- **입력 상태 관리 (State)**  
+  - `useState`로 `tweet`, `file`, `isLoading` 상태 관리  
+  - `onChange` 이벤트로 텍스트 입력 및 파일 첨부 처리  
+
+- **조건부 렌더링**  
+  - 첨부된 파일 유무에 따라 `"Add Photo"` → `"Photo Added"` 텍스트 전환  
+  - `accept="image/*"`로 이미지 파일만 허용  
+  - `rows`, `maxLength`를 통해 텍스트 입력 크기 제한  
+
+---
+
+### 🆕 새롭게 알게 된 개념
+<details>
+
+#### ⭐ `htmlFor="file"`의 의미
+- `<label>` 요소에 `htmlFor="file"`을 설정하면  
+  해당 `label` 클릭 시 `id="file"`을 가진 `<input>` 요소가 클릭됨  
+- 즉, **기본 파일 업로드 UI 대신 커스텀 버튼(`label`)으로 파일 업로드 트리거 가능**  
+- 실제 `<input type="file">`은 `display: none`으로 숨기고 UI는 `label`로 대체함
+
+```tsx
+<label htmlFor="file">Add Photo</label>
+<input type="file" id="file" accept="image/*" style={{ display: "none" }} />
+```
+
+---
+
+#### ⭐ `accept="image/*"`의 의미
+- `input`의 `accept` 속성은 **업로드할 수 있는 파일의 형식을 제한**함  
+- `"image/*"`은 **모든 이미지 확장자(jpg, png, gif 등)를 허용**하는 의미  
+- 사용자가 다른 형식(PDF 등)을 첨부하려고 하면 브라우저가 제한함
+
+```tsx
+<input type="file" accept="image/*" />
+```
+
+</details>
+</details>
