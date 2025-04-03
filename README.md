@@ -451,3 +451,54 @@ const Wrapper = styled.div`
 
 </details>
 </details>
+
+<details>
+  <summary>📅 2025-04-03  이미지 업로드 & 트윗 저장</summary>
+
+- **Firebase Storage & Firestore 연동하여 이미지 포함 트윗 저장**  
+  - 트윗 작성 시 사용자가 사진을 첨부했다면, 해당 이미지를 Firebase Storage에 업로드  
+  - 업로드한 이미지의 **Download URL을 Firestore 문서에 추가**하여 트윗 내용과 함께 저장  
+
+- **업로드 경로 설계**  
+  - `tweets/{username}_{userId}/{doc.id}` 형태로 저장  
+  - 사용자별로 폴더 분리하여 트윗 이미지 관리  
+
+- **Firestore 문서 업데이트 흐름**  
+  - `addDoc()`으로 트윗 생성 → 트윗 ID 확보  
+  - `uploadBytes()`로 Storage에 이미지 업로드  
+  - `getDownloadURL()`로 이미지 URL 확보  
+  - `updateDoc()`으로 해당 트윗 문서에 이미지 URL 추가
+
+- **트윗 완료 후 상태 초기화 처리**  
+  - `setTweet("")`, `setFile(null)`로 입력 필드 초기화
+
+---
+
+### 🔄 트윗 + 이미지 저장 흐름 요약
+
+```tsx
+const locationRef = ref(storage, `tweets/${user.displayName}_${user.uid}/${doc.id}`);
+await uploadBytes(locationRef, file);
+const url = await getDownloadURL(locationRef);
+await updateDoc(doc, { photo: url });
+```
+
+---
+
+### 📌 `required` 속성의 개념
+
+- `required`는 **HTML의 유효성 검사 속성 중 하나**
+- 해당 입력 필드에 **값이 입력되지 않으면 폼 제출을 막음**
+- 브라우저가 자동으로 "이 필드를 입력하세요"와 같은 메시지를 보여줌  
+- 주로 사용자 입력이 **반드시 필요한 경우에 사용**
+
+```html
+<input type="text" required />
+```
+
+예시: 사용자가 아무것도 입력하지 않고 폼을 제출하려 할 때, 제출이 중단됨
+
+</details>
+
+
+
