@@ -502,3 +502,49 @@ await updateDoc(doc, { photo: url });
 
 
 
+<details>
+<summary>📆 2025-04-07 Firestore 쿼리 및 Tweet 렌더링  </summary>
+
+- **Firestore에서 트윗 데이터 가져오기**
+  - `getDocs()`와 `query()` 조합을 통해 Firestore의 `tweets` 컬렉션에서 데이터 조회
+  - `orderBy("createdAt", "desc")`로 최신순 정렬
+  - `snapshot.docs.map()`을 활용해 데이터 가공 후 `useState`로 상태 업데이트  
+
+- **타입 정의 및 상태 관리**
+  - `interface ITweet` 정의하여 트윗 데이터의 타입 명세
+  - `useState<ITweet[]>`로 트윗 리스트 상태 관리  
+
+- **`Tweet` 컴포넌트 분리 및 렌더링**
+  - `Tweet.tsx` 생성하여 트윗 단일 UI 렌더링 컴포넌트 구현
+  - `props`로 트윗 내용, 유저명, 이미지 등을 전달 받아 렌더링
+  - `map()`을 통해 리스트 렌더링 시 `key`로 `tweet.id` 활용  
+
+- **UI 구성**
+  - `styled-components`를 활용한 `Wrapper`, `Username`, `Payload`, `Photo` 등의 UI 스타일 적용  
+  - `grid-template-columns`를 사용한 트윗 배치 구성  
+
+---
+
+### 새롭게 알게 된 개념
+
+<details>
+  <summary>1. `required` 속성</summary>
+
+- HTML 폼 요소에 `required` 속성을 지정하면, **해당 입력이 비어 있으면 폼 제출이 불가능**함  
+- 예: 트윗 텍스트는 필수지만, 이미지 파일은 선택 사항으로 구현 가능  
+- 브라우저 레벨에서 유효성 검사를 수행하여 사용자 입력을 강제할 수 있음  
+
+```tsx
+<textarea required placeholder="무슨 일이 일어나고 있나요?" />
+<input type="file" accept="image/*" />
+```
+
+</details>
+
+<details>
+  <summary>2. `grid-template-rows` + `overflow-y: scroll`을 활용한 레이아웃</summary>
+
+- 상단에 트윗 작성 폼 고정, 하단 트윗 리스트만 스크롤 되도록 설정  
+- `grid-template-rows: 1fr 5fr` + `overflow-y: scroll` 조합 활용  
+</details>
+</details>
