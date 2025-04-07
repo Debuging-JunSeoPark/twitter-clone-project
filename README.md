@@ -528,21 +528,7 @@ await updateDoc(doc, { photo: url });
 ### 새롭게 알게 된 개념
 
 <details>
-  <summary>1. `required` 속성</summary>
-
-- HTML 폼 요소에 `required` 속성을 지정하면, **해당 입력이 비어 있으면 폼 제출이 불가능**함  
-- 예: 트윗 텍스트는 필수지만, 이미지 파일은 선택 사항으로 구현 가능  
-- 브라우저 레벨에서 유효성 검사를 수행하여 사용자 입력을 강제할 수 있음  
-
-```tsx
-<textarea required placeholder="무슨 일이 일어나고 있나요?" />
-<input type="file" accept="image/*" />
-```
-
-</details>
-
-<details>
-  <summary>2. `grid-template-rows` + `overflow-y: scroll`을 활용한 레이아웃</summary>
+  <summary>`grid-template-rows` + `overflow-y: scroll`을 활용한 레이아웃</summary>
 
 - 상단에 트윗 작성 폼 고정, 하단 트윗 리스트만 스크롤 되도록 설정  
 - `grid-template-rows: 1fr 5fr` + `overflow-y: scroll` 조합 활용  
