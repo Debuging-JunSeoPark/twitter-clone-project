@@ -534,3 +534,92 @@ await updateDoc(doc, { photo: url });
 - `grid-template-rows: 1fr 5fr` + `overflow-y: scroll` 조합 활용  
 </details>
 </details>
+
+<details>
+<summary>📆 2025-04-08 Firestore 실시간 쿼리 (`onSnapshot`)  </summary>
+
+### 🔄 실시간 데이터 구독 기능 구현
+
+- `getDocs()` 대신 `onSnapshot()`을 사용하여 **쿼리 결과에 대한 실시간 구독** 구현
+- Firestore에서 데이터 **추가 / 수정 / 삭제 시 자동 반영**
+- `useEffect` 내에서 `onSnapshot()` 호출 → **마운트 시 구독 시작, 언마운트 시 구독 해제**
+
+```tsx
+useEffect(() => {
+  const unsubscribe = onSnapshot(tweetsQuery, (snapshot) => {
+    const tweets = snapshot.docs.map((doc) => {
+      const { tweet, createdAt, userId, username, photo } = doc.data();
+      return {
+        id: doc.id,
+        tweet,
+        createdAt,
+        userId,
+        username,
+        photo,
+      };
+    });
+    setTweets(tweets);
+  });
+
+  return () => {
+    // 언마운트 시 실시간 구독 해제 (cleanup)
+    unsubscribe();
+  };
+}, []);
+```
+
+---
+
+### ⚠️ 성능 고려: `limit()` 적용
+
+- **불필요한 데이터 과다 수신 방지**를 위해 `limit()` 사용
+- 예: `limit(25)` → 최근 25개 트윗만 조회
+
+```tsx
+const tweetsQuery = query(
+  collection(database, "tweets"),
+  orderBy("createdAt", "desc"),
+  limit(25)
+);
+```
+
+---
+
+### 새롭게 알게 된 개념
+
+<details>
+  <summary>1. `teardown` / `cleanup` 함수</summary>
+
+- `useEffect`에서 **리턴하는 함수는 컴포넌트 언마운트 시 실행됨**
+- 실시간 구독(`onSnapshot`) 또는 이벤트 리스너 제거 시 사용
+- **메모리 누수 방지** 및 **불필요한 구독 제거**를 위해 필수
+
+```tsx
+useEffect(() => {
+  const unsubscribe = onSnapshot(...);
+  return () => {
+    unsubscribe(); // 컴포넌트가 사라질 때 구독 해제
+  };
+}, []);
+```
+
+</details>
+
+<details>
+  <summary>2. `await`의 사용 이유</summary>
+
+- `onSnapshot` 자체는 **비동기 함수가 아니므로 `await`가 필요하지 않음**
+- 기존 `getDocs()`는 `await`가 필요했지만, `onSnapshot()`은 동기적으로 **unsubscribe 함수**를 반환함
+- 실무에서는 `await onSnapshot()` ❌ → **단순히 `onSnapshot()` 호출** ✅
+
+```tsx
+// ❌ 잘못된 예시
+const unsubscribe = await onSnapshot(...);
+
+// ✅ 올바른 사용
+const unsubscribe = onSnapshot(...);
+```
+
+</details>
+
+</details>
