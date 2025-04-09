@@ -30,6 +30,20 @@ import { styled } from "styled-components";
    margin: 10px 0px;
    font-size: 18px;
  `;
+
+ const DeleteButton = styled.button`
+  
+   background-color: tomato;
+   color: white;
+   font-weight: 600;
+   border: 0;
+   font-size: 12px;
+   padding: 5px 10px;
+   text-transform: uppercase;
+   border-radius: 5px;
+   cursor: pointer;
+ `;
+ 
  
  export default function Tweet({ username, photo, tweet }: ITweet) {
    return (
@@ -37,6 +51,7 @@ import { styled } from "styled-components";
        <Column>
          <Username>{username}</Username>
          <Payload>{tweet}</Payload>
+         <DeleteButton>Delete</DeleteButton>
        </Column>
        
        <Column>{photo ? <Photo src={photo} /> : null}</Column>
