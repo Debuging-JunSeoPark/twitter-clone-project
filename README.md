@@ -623,3 +623,76 @@ const unsubscribe = onSnapshot(...);
 </details>
 
 </details>
+
+
+<details>
+<summary>📆 2025-04-10 트윗 삭제 기능 구현</summary>
+
+### 🗑️ 트윗 삭제 조건 및 기능 구현
+
+- 트윗 작성자와 현재 로그인 사용자의 ID가 동일할 경우에만 **삭제 버튼 표시**
+- 삭제 시 다음 두 작업을 함께 수행:
+  1. **Firestore에서 트윗 문서 삭제**
+  2. **Firebase Storage에서 연결된 이미지 파일 삭제**
+
+```tsx
+// 삭제 버튼 클릭 시
+const onDelete = async () => {
+  const ok = confirm("Are you sure you want to delete this tweet?");
+  if (!ok || !user || user.uid !== userId) return;
+
+  try {
+    // 1. Firestore에서 문서 삭제
+    await deleteDoc(doc(database, "tweets", id));
+
+    // 2. Storage에서 이미지 삭제 (이미지가 존재할 경우)
+    if (photo) {
+      const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
+      await deleteObject(photoRef);
+    }
+  } catch (error) {
+    console.error("삭제 중 오류 발생:", error);
+  }
+};
+```
+
+---
+
+### ✅ 삭제 버튼 조건부 렌더링
+
+```tsx
+{user?.uid === userId ? <DeleteButton onClick={onDelete}>Delete</DeleteButton> : null}
+```
+
+---
+
+### 📁 이미지 경로 규칙
+
+트윗 이미지 파일은 아래 경로에 저장됨:
+
+```
+tweets/{user.uid}/{tweet.id}
+```
+
+> 👉 트윗 삭제 시 이미지 파일 경로를 쉽게 참조하기 위해 **트윗의 ID와 이미지 파일명 일치**시킴
+
+---
+
+### 새롭게 알게 된 개념
+
+<details>
+  <summary>1. `ref()` 함수 (Firebase Storage)</summary>
+
+- `ref()`는 Firebase Storage 내의 **파일 또는 디렉토리의 경로를 참조**하기 위한 함수
+- 예를 들어, 특정 사용자의 트윗 이미지에 대한 참조 객체를 만들 때 사용
+
+```tsx
+const photoRef = ref(storage, `tweets/${user.uid}/${tweet.id}`);
+```
+
+- 해당 `ref` 객체는 다음과 같은 작업에 사용됨:
+  - 파일 업로드: `uploadBytes(photoRef, file)`
+  - URL 가져오기: `getDownloadURL(photoRef)`
+  - 파일 삭제: `deleteObject(photoRef)`
+</details>
+</details>
