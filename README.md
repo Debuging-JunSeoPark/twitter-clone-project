@@ -628,7 +628,7 @@ const unsubscribe = onSnapshot(...);
 <details>
 <summary>📆 2025-04-10 트윗 삭제 기능 구현</summary>
 
-### 🗑️ 트윗 삭제 조건 및 기능 구현
+### 트윗 삭제 조건 및 기능 구현
 
 - 트윗 작성자와 현재 로그인 사용자의 ID가 동일할 경우에만 **삭제 버튼 표시**
 - 삭제 시 다음 두 작업을 함께 수행:
@@ -658,7 +658,7 @@ const onDelete = async () => {
 
 ---
 
-### ✅ 삭제 버튼 조건부 렌더링
+### 삭제 버튼 조건부 렌더링
 
 ```tsx
 {user?.uid === userId ? <DeleteButton onClick={onDelete}>Delete</DeleteButton> : null}
@@ -666,7 +666,7 @@ const onDelete = async () => {
 
 ---
 
-### 📁 이미지 경로 규칙
+### 이미지 경로 규칙
 
 트윗 이미지 파일은 아래 경로에 저장됨:
 
