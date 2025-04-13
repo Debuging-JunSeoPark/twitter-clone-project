@@ -1,9 +1,11 @@
 import { styled } from "styled-components";
  import { ITweet } from "./timeline";
 import { auth, db, storage } from "../firebase";
-import { deleteDoc, doc } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
- 
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref, uploadBytes, getDownloadURL} from "firebase/storage";
+import { useState } from "react"; 
+
+
  const Wrapper = styled.div`
    display: grid;
    grid-template-columns: 3fr 1fr;
@@ -63,6 +65,10 @@ import { deleteObject, ref } from "firebase/storage";
  
  export default function Tweet({ username, photo, tweet, userId, id}: ITweet) {
   const user = auth.currentUser;
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(tweet);
+  const [newFile, setNewFile] = useState<File | null>(null);
+
   const onDelete = async () => {
     const ok = confirm("Are you sure you want to delte this tweet?")
     if (!ok || user?.uid !== userId) return ;
@@ -78,21 +84,82 @@ import { deleteObject, ref } from "firebase/storage";
 
     }
   };
-   return (
-     <Wrapper>
-       <Column>
-         <Username>{username}</Username>
-         <Payload>{tweet}</Payload>
-         {user?.uid === userId ? 
-        <>
-        <DeleteButton onClick={onDelete}>Delete</DeleteButton>
-        <EditButton>Edit</EditButton>
-      </>
-         :null}
-  
-       </Column>
-       
-       <Column>{photo ? <Photo src={photo} /> : null}</Column>
-     </Wrapper>
-   );
- }
+
+  const onEditSave = async () => {
+    if (editText.trim() === "") return alert("내용을 입력해주세요.");
+
+    const tweetRef = doc(db, "tweets", id);
+    let newPhotoURL = photo;
+
+    try {
+      if (newFile) {
+        if (photo) {
+          const oldRef = ref(storage, `tweets/${user?.uid}/${id}`);
+          await deleteObject(oldRef);
+        }
+        const storageRef = ref(storage, `tweets/${user?.uid}/${id}`);
+        const result = await uploadBytes(storageRef, newFile);
+        newPhotoURL = await getDownloadURL(result.ref);
+      }
+
+      await updateDoc(tweetRef, {
+        tweet: editText,
+        photo: newPhotoURL || null,
+      });
+
+      setIsEditing(false);
+      setNewFile(null);
+    } catch (e) {
+      console.log("업데이트 실패:", e);
+    }
+  };
+
+
+
+
+  return (
+    <Wrapper>
+      <Column>
+        <Username>{username}</Username>
+        {isEditing ? (
+          <>
+            <input
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              style={{ fontSize: "16px", padding: "5px", width: "100%" }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setNewFile(file);
+              }}
+              style={{ marginTop: "10px" }}
+            />
+            <div style={{ marginTop: "10px" }}>
+              <EditButton onClick={onEditSave}>Save</EditButton>
+              <DeleteButton onClick={() => setIsEditing(false)}>Cancel</DeleteButton>
+            </div>
+          </>
+        ) : (
+          <>
+            <Payload>{tweet}</Payload>
+            {user?.uid === userId ? (
+              <>
+                <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+                <EditButton onClick={() => setIsEditing(true)}>Edit</EditButton>
+              </>
+            ) : null}
+          </>
+        )}
+      </Column>
+
+      <Column>
+        {(photo || newFile) && (
+          <Photo src={newFile ? URL.createObjectURL(newFile) : photo} />
+        )}
+      </Column>
+    </Wrapper>
+  );
+}
