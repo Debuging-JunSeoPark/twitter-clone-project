@@ -46,6 +46,19 @@ import { deleteObject, ref } from "firebase/storage";
    border-radius: 5px;
    cursor: pointer;
  `;
+
+ const EditButton = styled.button`
+  background-color: #1DA1F2;
+  color: white;
+  font-weight: 600;
+  border: 0;
+  font-size: 12px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px; // Delete 버튼과 간격
+`;
  
  
  export default function Tweet({ username, photo, tweet, userId, id}: ITweet) {
@@ -70,7 +83,13 @@ import { deleteObject, ref } from "firebase/storage";
        <Column>
          <Username>{username}</Username>
          <Payload>{tweet}</Payload>
-         {user?.uid === userId ? <DeleteButton onClick={onDelete}>Delete</DeleteButton> :null}
+         {user?.uid === userId ? 
+        <>
+        <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+        <EditButton>Edit</EditButton>
+      </>
+         :null}
+  
        </Column>
        
        <Column>{photo ? <Photo src={photo} /> : null}</Column>
