@@ -68,6 +68,8 @@ import { useState } from "react";
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(tweet);
   const [newFile, setNewFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+
 
   const onDelete = async () => {
     const ok = confirm("Are you sure you want to delte this tweet?")
@@ -75,7 +77,7 @@ import { useState } from "react";
     try{
       await deleteDoc(doc(db, "tweets", id));
       if(photo){
-        const photoRef = ref(storage,'tweets/${user.uid}/${id}')
+        const photoRef = ref(storage,`tweets/${user.uid}/${id}`)
         await deleteObject(photoRef);
       }
     }catch(e){
@@ -87,6 +89,7 @@ import { useState } from "react";
 
   const onEditSave = async () => {
     if (editText.trim() === "") return alert("내용을 입력해주세요.");
+    setLoading(true);
 
     const tweetRef = doc(db, "tweets", id);
     let newPhotoURL = photo;
@@ -94,12 +97,18 @@ import { useState } from "react";
     try {
       if (newFile) {
         if (photo) {
-          const oldRef = ref(storage, `tweets/${user?.uid}/${id}`);
-          await deleteObject(oldRef);
+          try {
+            const oldRef = ref(storage, `tweets/${user?.uid}/${id}`);
+            await deleteObject(oldRef);
+          } catch (error) {
+            console.warn("기존 이미지 삭제 실패 (없을 수 있음):", error);
+          }
         }
         const storageRef = ref(storage, `tweets/${user?.uid}/${id}`);
         const result = await uploadBytes(storageRef, newFile);
+        console.log("이미지 업로드 완료:", result);
         newPhotoURL = await getDownloadURL(result.ref);
+        console.log("다운로드 URL:", newPhotoURL);
       }
 
       await updateDoc(tweetRef, {
@@ -111,10 +120,16 @@ import { useState } from "react";
       setNewFile(null);
     } catch (e) {
       console.log("업데이트 실패:", e);
+    }finally{
+      setLoading(false);
     }
   };
 
-
+  const onCancelEdit = () => {
+    setIsEditing(false);
+    setEditText(tweet);   
+    setNewFile(null);   
+  };
 
 
   return (
@@ -138,8 +153,8 @@ import { useState } from "react";
               style={{ marginTop: "10px" }}
             />
             <div style={{ marginTop: "10px" }}>
-              <EditButton onClick={onEditSave}>Save</EditButton>
-              <DeleteButton onClick={() => setIsEditing(false)}>Cancel</DeleteButton>
+              <EditButton onClick={onEditSave}  style={{ marginLeft: "0px", marginRight:"10px" }}>Save</EditButton>
+              <DeleteButton onClick={onCancelEdit}>Cancel</DeleteButton>
             </div>
           </>
         ) : (
