@@ -696,3 +696,113 @@ const photoRef = ref(storage, `tweets/${user.uid}/${tweet.id}`);
   - 파일 삭제: `deleteObject(photoRef)`
 </details>
 </details>
+
+물론입니다! 아래는 오늘 학습한 내용을 마크다운 형식으로 정리한 내용입니다.
+
+---
+
+<details>
+<summary>📆 2025-04-16 유저 프로필 아바타 업로드 구현</summary>
+
+### 📌 구현한 내용
+
+- **사용자 프로필 화면(Profile Page) 구성**
+  - 사용자 이름과 아바타(프로필 사진) 표시
+  - 아바타가 없을 경우 SVG 아이콘으로 대체
+  - 아바타 클릭 시 파일 선택창 열림 (커스텀 스타일링된 label 사용)
+
+- **이미지 업로드 흐름**
+  1. `<input type="file" accept="image/*" />`로 이미지 파일 선택
+  2. Firebase Storage에 이미지 업로드
+  3. 업로드된 이미지의 URL을 사용자 프로필에 저장 (`updateProfile`)
+  4. 상태 업데이트 (`setAvatar`) → 화면에 즉시 반영
+
+- **Firebase Storage 저장 경로 설계**
+  - 아바타는 `avatars/{userId}` 경로에 저장됨
+  - 동일한 경로에 **이미지를 덮어쓰기(override)** 하여 스토리지 용량 최적화
+
+---
+
+### 💡 새롭게 알게 된 개념
+
+<details>
+<summary>1. 아바타 업로드 버튼과 숨겨진 input 연결</summary>
+
+- `<label>`과 `<input type="file">`를 연결하여 커스텀 버튼처럼 동작하게 구현
+- `htmlFor="avatar"`와 `id="avatar"` 속성을 사용
+
+```tsx
+<label htmlFor="avatar">Upload Avatar</label>
+<input type="file" id="avatar" accept="image/*" style={{ display: "none" }} />
+```
+
+</details>
+
+<details>
+<summary>2. Firebase Storage에 아바타 이미지 업로드</summary>
+
+- `ref()` 함수를 사용해 저장 경로 참조 객체 생성
+- 사용자 ID를 이미지 이름으로 사용 → 덮어쓰기 방식으로 관리
+
+```tsx
+const locationRef = ref(storage, `avatars/${user.uid}`);
+await uploadBytes(locationRef, file);
+const url = await getDownloadURL(locationRef);
+```
+
+</details>
+
+<details>
+<summary>3. `updateProfile`로 사용자 이미지 URL 설정</summary>
+
+- Firebase Authentication의 사용자 프로필에 아바타 URL 저장
+- 저장된 URL은 `user.photoURL`로 참조 가능
+
+```tsx
+await updateProfile(user, { photoURL: avatarUrl });
+```
+
+</details>
+
+<details>
+<summary>4. 이미지 하나만 저장하는 방식의 스토리지 관리 전략</summary>
+
+- 동일한 사용자에 대해 **이미지를 덮어쓰기 방식으로 저장**
+  - 예: `avatars/abc123` → 새 이미지를 업로드하면 기존 이미지 덮어씀
+- 스토리지에 **불필요한 중복 이미지 저장 방지**
+  - 비용 절감 및 관리 효율성 향상
+
+</details>
+
+---
+
+### ✅ 전체 흐름 요약
+
+```tsx
+// 1. 이미지 선택
+const file = e.target.files?.[0];
+
+// 2. 업로드 위치 지정 (유저 ID 기준)
+const locationRef = ref(storage, `avatars/${user.uid}`);
+
+// 3. Storage에 업로드
+await uploadBytes(locationRef, file);
+
+// 4. 이미지 URL 가져오기
+const avatarUrl = await getDownloadURL(locationRef);
+
+// 5. 사용자 프로필 업데이트
+await updateProfile(user, { photoURL: avatarUrl });
+
+// 6. 상태 업데이트 → UI 변경
+setAvatar(avatarUrl);
+```
+
+---
+
+📸 **결과**
+- 프로필 화면에서 아바타 이미지를 변경 가능
+- Firebase Storage에는 사용자당 **이미지 1개만 저장됨**
+- 매번 새 이미지를 업로드해도 기존 이미지를 덮어써 **스토리지 낭비 없음**
+
+</details>
