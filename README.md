@@ -697,10 +697,6 @@ const photoRef = ref(storage, `tweets/${user.uid}/${tweet.id}`);
 </details>
 </details>
 
-물론입니다! 아래는 오늘 학습한 내용을 마크다운 형식으로 정리한 내용입니다.
-
----
-
 <details>
 <summary>📆 2025-04-16 유저 프로필 아바타 업로드 구현</summary>
 
