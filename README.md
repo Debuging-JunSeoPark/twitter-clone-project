@@ -802,3 +802,113 @@ setAvatar(avatarUrl);
 - 매번 새 이미지를 업로드해도 기존 이미지를 덮어써 **스토리지 낭비 없음**
 
 </details>
+
+<details>
+<summary>📆 2025-04-17 유저 본인의 트윗만 불러오기 (Firestore 필터링)</summary>
+
+### 📌 구현한 기능
+- 현재 로그인된 유저의 UID를 기준으로 Firestore의 `tweets` 컬렉션에서 **자신이 작성한 트윗만 조회**
+- `useEffect`를 활용하여 마운트 시 `fetchTweets()` 함수 실행
+- 필터링 쿼리를 위해 **Firestore 인덱스 생성 작업 필요**
+
+---
+
+### 🔨 사용된 코드 요약
+
+```tsx
+useEffect(() => {
+  fetchTweets();
+}, []);
+```
+
+```tsx
+const tweetQuery = query(
+  collection(database, "tweets"),
+  where("userId", "==", user.uid),        // 현재 로그인된 유저의 트윗만 조회
+  orderBy("createdAt", "desc"),           // 최신순 정렬
+  limit(25)                               // 최대 25개까지만 가져오기
+);
+
+const snapshot = await getDocs(tweetQuery);
+
+const tweets = snapshot.docs.map(doc => {
+  const { tweet, createdAt, userId, username, photo } = doc.data();
+  return {
+    id: doc.id,
+    tweet,
+    createdAt,
+    userId,
+    username,
+    photo,
+  };
+});
+
+setTweets(tweets);
+```
+
+---
+
+### 📘 새롭게 알게 된 개념
+
+<details>
+<summary>1. `useEffect(() => { fetchTweets(); }, [])`에서 `[]`의 의미</summary>
+
+- `[]`는 **의존성 배열(Dependency Array)** 로, 비어있을 경우 해당 `useEffect`는 **컴포넌트가 처음 마운트될 때 1회만 실행**됨.
+- 이 구조는 **초기 데이터 로딩 시점에 fetch 함수 호출**을 할 때 자주 사용됨.
+- `fetchTweets()`를 반복해서 호출하지 않도록 막는 안전장치 역할.
+
+</details>
+
+<details>
+<summary>2. Firestore `where()` + `orderBy()`를 함께 사용한 쿼리 필터링</summary>
+
+- `where()`은 Firestore에서 특정 필드 기준으로 **조건을 걸어 필터링**할 수 있는 함수
+
+```tsx
+where("userId", "==", user.uid)
+```
+
+- `orderBy()`는 정렬 기준을 지정하는 함수
+- `limit()`은 가져올 문서 수 제한
+
+> 조합 예시:
+```tsx
+query(
+  collection(database, "tweets"),
+  where("userId", "==", user.uid),
+  orderBy("createdAt", "desc"),
+  limit(25)
+);
+```
+
+</details>
+
+<details>
+<summary>3. Firestore 쿼리 조건에 따라 **인덱스 생성이 필요**할 수 있음</summary>
+
+- Firestore는 매우 유연한 구조를 제공하지만, **복합 필터링(where + orderBy)** 시 **인덱스 생성이 필요**함
+- 쿼리를 처음 실행하면 Firebase 콘솔에서 "인덱스를 만들어야 한다"는 에러와 함께 **자동 생성 링크가 제공됨**
+- 이 링크를 클릭하여 **해당 조건에 맞는 인덱스를 수동 생성해야 함**
+- 생성 이후에는 **해당 조건 쿼리가 자유롭게 작동**함
+
+> ✅ 인덱스 생성은 **한 번만 하면 이후 앱 전체에서 계속 사용할 수 있음**
+
+---
+
+### 🔁 쿼리 조건 정리
+
+| 조건 구문 | 의미 |
+|-----------|------|
+| `where("userId", "==", user.uid)` | `userId`가 현재 로그인 유저와 같은 문서만 조회 |
+| `orderBy("createdAt", "desc")` | 최신 순으로 정렬 |
+| `limit(25)` | 최대 25개의 트윗만 가져옴 |
+
+---
+
+### ✅ 최종 결과
+
+- 프로필 화면에서 해당 유저가 작성한 트윗만 필터링하여 표시 가능
+- 필터링 쿼리 동작을 위해 Firestore 인덱스 자동 생성 경험
+- `Tweet` 컴포넌트를 재사용하여 동일 UI 구성 완료
+
+</details>
