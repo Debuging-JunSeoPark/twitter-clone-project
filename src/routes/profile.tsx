@@ -45,10 +45,37 @@ const Tweets = styled.div`
     gap: 10px;
 `;
 
+const NameWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const EditButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+const NameInput = styled.input`
+  font-size: 22px;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  border-radius: 6px;
+`;
+
 export default function Profile() {
     const user = auth.currentUser;
     const [avatar, setAvatar] = useState(user?.photoURL || null);
     const [tweets,setTweets] = useState<ITweet[]>([]);
+    const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState(user?.displayName || "");
+
     const onAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = e.target;
         if (!user) return;
@@ -63,6 +90,15 @@ export default function Profile() {
             });
         }
     };
+    const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewName(e.target.value);
+      };
+    
+      const saveNewName = async () => {
+        if (!user || newName.trim() === "") return;
+        await updateProfile(user, { displayName: newName.trim() });
+        setIsEditingName(false);
+      };
 
     const fetchTweets = async() => {
         const tweetQuery = query(
@@ -95,9 +131,22 @@ export default function Profile() {
             </svg>)}
         </AvatarUpload>
         <AvatarInput onChange={onAvatarChange} id="avatar" type="file" accept="image/*" />
-        <Name>
-            {user?.displayName ?? "Anonymous"}
-        </Name>
+        <NameWrapper>
+        {isEditingName ? (
+          <>
+            <NameInput value={newName} onChange={onNameChange} onBlur={saveNewName} autoFocus />
+          </>
+        ) : (
+          <>
+            <Name>{user?.displayName ?? "Anonymous"}</Name>
+            <EditButton onClick={() => setIsEditingName(true)} title="Edit nickname">
+              <svg data-slot="icon" fill="none" strokeWidth="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688..." />
+              </svg>
+            </EditButton>
+          </>
+        )}
+      </NameWrapper>
         <Tweets>
             {tweets.map(tweet => <Tweet key={tweet.id} {...tweet}/>)}
         </Tweets>
