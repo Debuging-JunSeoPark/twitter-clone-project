@@ -5,12 +5,12 @@ import { getStorage } from "firebase/storage";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD0l8bAAY2MC9hvtr4itjCOo9eVyYr5Ft8",
-  authDomain: "jwitter-reloaded-8de6b.firebaseapp.com",
-  projectId: "jwitter-reloaded-8de6b",
-  storageBucket: "jwitter-reloaded-8de6b.firebasestorage.app",
-  messagingSenderId: "878550862118",
-  appId: "1:878550862118:web:549a069baa1294b9bcd9e7"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 
